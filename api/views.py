@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
 from .services import get_rooms_list, get_rooms_detail, get_rooms_detail_availability
-from .serializers import RoomSerializer, AvailabilitySerializer
+from .serializers import RoomSerializer, AvailabilitySerializer, BookingSerializer
 
 
 # Create your views here.
@@ -66,4 +66,14 @@ def rooms_detail_availability_api_view(request, pk):
     serializer = AvailabilitySerializer(available_times, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
-# TODO: create booking functionality
+
+@api_view(['POST'])
+def rooms_book_api_view(request, pk):
+    room = get_rooms_detail(pk)
+    serializer = BookingSerializer(data=request.data, context={"room": room})
+    if serializer.is_valid():
+        booking = serializer.save()
+        return Response({"message": "xona muvaffaqiyatli band qilindi"}, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_410_GONE)
+
+# TODO: test the built rest api

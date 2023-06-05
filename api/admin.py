@@ -8,9 +8,15 @@ class AvailabilityInline(admin.TabularInline):
     extra = 0
 
 
+class BookingInline(admin.TabularInline):
+    fk_name = 'room'
+    model = Booking
+    extra = 0
+
+
 class RoomAdmin(admin.ModelAdmin):
     fields = ["name", "type", "capacity"]
-    inlines = [AvailabilityInline]
+    inlines = [AvailabilityInline, BookingInline]
 
 
 # Register your models here.

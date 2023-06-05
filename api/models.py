@@ -30,7 +30,7 @@ class Room(models.Model):
 
 
 class Resident(models.Model):
-    name = models.CharField(max_length=255, null=False, blank=False, verbose_name="Name of the resident")
+    name = models.CharField(max_length=255, unique=True, null=False, blank=False, verbose_name="Name of the resident")
 
     def __str__(self):
         return self.name
@@ -39,15 +39,28 @@ class Resident(models.Model):
         return f"Resident(name={self.name})"
 
 
-class Availability(models.Model):
+class Booking(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE, null=False, blank=False, verbose_name="Room",
-                             related_name="available_times")
-    name = models.ForeignKey(Resident, on_delete=models.SET_DEFAULT, default=None, null=True, blank=True,
-                             verbose_name="Name of the resident")
+                             related_name="bookings")
+    resident = models.ForeignKey(Resident, on_delete=models.CASCADE, null=False, blank=False, verbose_name="Resident",
+                                 related_name="bookings")
     date = models.DateField(default=None, null=True, blank=True, verbose_name="Date")
     start = models.TimeField(null=False, blank=False, verbose_name="Start time")
     end = models.TimeField(null=False, blank=False, verbose_name="End time")
-    is_available = models.BooleanField(default=True, null=False, blank=False, verbose_name="Is this time available")
+
+    def __str__(self):
+        return self.resident.name
+
+    def __repr__(self):
+        return f"Booking(room={self.room.name}, resident={self.resident.name}, start={self.start}, end={self.end})"
+
+
+class Availability(models.Model):
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, null=False, blank=False, verbose_name="Room",
+                             related_name="available_times")
+    date = models.DateField(default=None, null=True, blank=True, verbose_name="Date")
+    start = models.TimeField(null=False, blank=False, verbose_name="Start time")
+    end = models.TimeField(null=False, blank=False, verbose_name="End time")
 
     def __str__(self):
         return self.room.name
