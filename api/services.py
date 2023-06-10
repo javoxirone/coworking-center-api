@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404
-from .models import Room, Availability, Resident
+from .models import Room, Availability, Resident, Booking
 from datetime import datetime, timedelta
 
 
@@ -26,6 +26,7 @@ def get_rooms_detail_availability(pk, date=None):
 
 
 def get_resident_or_create(name):
+    """ This service tries to get particular resident by name otherwise creates this resident """
     try:
         resident = Resident.objects.get(name=name)
     except Exception as e:
@@ -49,6 +50,7 @@ def _get_time_sum_formatted(time1, time2):
 
 
 def get_new_time_slots(start_time, end_time, available_time_slot):
+    """ This service returns new time slots in tuple """
     diff_end = _get_time_difference_formatted(available_time_slot.end, end_time)
     diff_start = _get_time_difference_formatted(start_time, available_time_slot.start)
 
@@ -58,3 +60,42 @@ def get_new_time_slots(start_time, end_time, available_time_slot):
     new_end_2 = datetime.strptime(str(available_time_slot.end), '%H:%M:%S')
 
     return (new_start_1, new_end_1), (new_start_2, new_end_2)
+
+
+def get_overlapping_bookings_list(room, date, start_time, end_time):
+    """ This service returns overlapping bookings list """
+    return room.bookings.filter(date=date, start__lt=end_time, end__gt=start_time)
+
+
+def get_overlapping_availabilities_list(room, date, start_time, end_time):
+    """ This service returns overlapping available times list """
+    return room.available_times.filter(date=date, start__lt=end_time, end__gt=start_time)
+
+
+def get_available_time_slot(room, start_time, end_time):
+    """ This service returns single time slot """
+    return room.available_times.get(start__lt=end_time, end__gt=start_time)
+
+
+def create_two_time_slots(new_time_slots, room, date):
+    """ This service gets two new time ranges with room and date as inputs and creates two new Availability (two new
+    time ranges in Availability table)"""
+    availabilities = []
+    for time_slot in new_time_slots:
+        start = time_slot[0]
+        end = time_slot[1]
+        print(start, end)
+        if start == end:
+            continue
+        availability = Availability(room=room, date=date, start=start, end=end)
+        availabilities.append(availability)
+    if availabilities:
+        Availability.objects.bulk_create(availabilities)
+
+
+def create_new_booking(room, resident, date, start_time, end_time):
+    """ This service gets arguments like time range with date and room, resident, then creates new booking and
+    returns new booking itself"""
+    booking = Booking(room=room, resident=resident, date=date, start=start_time, end=end_time)
+    booking.save()
+    return booking
