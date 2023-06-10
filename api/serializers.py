@@ -1,7 +1,9 @@
-from django.shortcuts import get_object_or_404
+from datetime import datetime, date
+
 from rest_framework import serializers
-from .models import Room, Availability, Booking, Resident
-from .services import get_resident_or_create, get_new_time_slots
+from .models import Room, Availability
+from .services import get_resident_or_create, get_new_time_slots, get_overlapping_bookings_list, \
+    get_overlapping_availabilities_list, get_available_time_slot, create_two_time_slots, create_new_booking
 
 
 class RoomSerializer(serializers.ModelSerializer):
@@ -32,13 +34,18 @@ class BookingSerializer(serializers.Serializer):
     end = serializers.CharField()
 
     def validate(self, data):
-        date, start_time = data['start'].split(" ")
+        date_str, start_time = data['start'].split(" ")
         end_time = data['end'].split(" ")[1]
+
         room = self.context['room']
-        overlapping_bookings = room.bookings.filter(date=date, start__lt=end_time, end__gt=start_time)
-        overlapping_availabilities = room.available_times.filter(date=date, start__lt=end_time, end__gt=start_time)
+        overlapping_bookings = get_overlapping_bookings_list(room, date_str, start_time, end_time)
+        overlapping_availabilities = get_overlapping_availabilities_list(room, date_str, start_time, end_time)
         if overlapping_bookings.exists() or not overlapping_availabilities:
             raise serializers.ValidationError({"error": "uzr, siz tanlagan vaqtda xona band"})
+        date_obj = datetime.strptime(date_str, '%Y-%m-%d').date()
+        current_date = date.today()
+        if date_obj < current_date:
+            raise serializers.ValidationError({"error": "o'tgan zamonga xona band qilolmaysiz =)"})
         return data
 
     def create(self, validated_data):
@@ -46,22 +53,10 @@ class BookingSerializer(serializers.Serializer):
         resident_name = validated_data['resident']['name']
         date, start_time = validated_data['start'].split(" ")
         end_time = validated_data['end'].split(" ")[1]
-        available_time_slot = room.available_times.get(start__lt=end_time, end__gt=start_time)
+        available_time_slot = get_available_time_slot(room, start_time, end_time)
         new_time_slots = get_new_time_slots(start_time, end_time, available_time_slot)
         available_time_slot.delete()
-
-        for time_slot in new_time_slots:
-            start = time_slot[0]
-            end = time_slot[1]
-            print(start, end)
-            if start == end:
-                continue
-            available_time = Availability(room=room, date=date, start=start, end=end)
-            available_time.save()
-
+        create_two_time_slots(new_time_slots, room, date)
         resident = get_resident_or_create(resident_name)
-        booking = Booking(room=room, resident=resident, date=date, start=start_time, end=end_time)
-        booking.save()
+        booking = create_new_booking(room, resident, date, start_time, end_time)
         return booking
-
-

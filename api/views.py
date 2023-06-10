@@ -69,10 +69,12 @@ def rooms_detail_availability_api_view(request, pk):
 
 @api_view(['POST'])
 def rooms_book_api_view(request, pk):
+    """ This view creates new booking and returns the custom message with 201 status if it successfully created,
+    otherwise it returns list of errors that happened during validation"""
     room = get_rooms_detail(pk)
     serializer = BookingSerializer(data=request.data, context={"room": room})
     if serializer.is_valid():
-        booking = serializer.save()
+        serializer.save()
         return Response({"message": "xona muvaffaqiyatli band qilindi"}, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_410_GONE)
 
