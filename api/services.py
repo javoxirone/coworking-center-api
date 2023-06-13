@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, get_list_or_404
 from .models import Room, Availability, Resident, Booking
 from datetime import datetime, timedelta
 
@@ -99,3 +99,10 @@ def create_new_booking(room, resident, date, start_time, end_time):
     booking = Booking(room=room, resident=resident, date=date, start=start_time, end=end_time)
     booking.save()
     return booking
+
+
+def get_list_or_object_of_booking(pk=None):
+    """ This services handles the bookings and returns single item of Booking or list of them """
+    if not pk:
+        return get_list_or_404(Booking)
+    return get_object_or_404(Booking, pk=pk)

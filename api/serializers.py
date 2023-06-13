@@ -1,7 +1,7 @@
 from datetime import datetime, date
 
 from rest_framework import serializers
-from .models import Room, Availability
+from .models import Room, Availability, Booking
 from .services import get_resident_or_create, get_new_time_slots, get_overlapping_bookings_list, \
     get_overlapping_availabilities_list, get_available_time_slot, create_two_time_slots, create_new_booking
 
@@ -28,7 +28,15 @@ class AvailabilitySerializer(serializers.ModelSerializer):
         return '{} {}'.format(obj.date, obj.end)
 
 
-class BookingSerializer(serializers.Serializer):
+class BookingSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Booking
+        fields = "__all__"
+        depth = 1
+
+
+class BookingCreateSerializer(serializers.Serializer):
     resident = serializers.DictField(child=serializers.CharField())
     start = serializers.CharField()
     end = serializers.CharField()
