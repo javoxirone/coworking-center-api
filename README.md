@@ -8,10 +8,10 @@
 6) Local serverda websaytni ishlagandan so'ng /admin/ path'ga o'tib (username: admin | password: 123) shu ma'lumotlarni kiritgan holda Admin panel'ga kirishingiz mumkin bo'ladi
 
 # API Endpoints
-API so'nggi nuqtalarining ildizi: "api/"
-Xonalar ro'yxati: "api/rooms/"
-Ma'lum bir xona tafsilotlari: "api/rooms/<int:pk>/"
-Ma'lum bir xona mavjudligi (vaqt oraliqlari): "api/rooms/<int:pk>/availability/"
-Mavjud vaqt oralig'i uchun alohida xonani band qiling: "api/rooms/<int:pk>/book/"
-Yagona bandlov: "api/bookings/<int:pk>/"
-Bandlovlari ro'yxati: "api/bookings/"
+<b>API so'nggi nuqtalarining ildizi:</b> "api/" <br>
+<b>Xonalar ro'yxati:</b> "api/rooms/"<br>
+<b>Ma'lum bir xona tafsilotlari:</b> "api/rooms/<int:pk>/"<br>
+<b>Ma'lum bir xona mavjudligi (vaqt oraliqlari):</b> "api/rooms/<int:pk>/availability/"<br>
+<b>Mavjud vaqt oralig'i uchun alohida xonani band qiling:</b> "api/rooms/<int:pk>/book/"<br>
+<b>Yagona bandlov:</b> "api/bookings/<int:pk>/"<br>
+<b>Bandlovlari ro'yxati:</b> "api/bookings/"<br>
