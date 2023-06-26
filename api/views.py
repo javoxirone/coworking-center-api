@@ -7,7 +7,8 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
 from .models import Booking
-from .services import get_rooms_list, get_rooms_detail, get_rooms_detail_availability, get_list_or_object_of_booking
+from .services import get_rooms_list, get_rooms_detail, get_rooms_detail_availability, get_list_or_object_of_booking, \
+    check_and_convert_date
 from .serializers import RoomSerializer, AvailabilitySerializer, BookingCreateSerializer, BookingSerializer
 
 
@@ -63,6 +64,8 @@ def rooms_detail_api_view(request, pk):
 def rooms_detail_availability_api_view(request, pk):
     """ This view returns particular room available times """
     date = request.GET.get("date", None)
+    date = check_and_convert_date(date)
+
     available_times = get_rooms_detail_availability(pk, date)
     serializer = AvailabilitySerializer(available_times, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
@@ -78,7 +81,7 @@ def rooms_book_api_view(request, pk):
         booking = serializer.save()  # passing context here
         return Response({"message": "xona muvaffaqiyatli band qilindi", "booking_id": booking.pk},
                         status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_410_GONE)
+    return Response({"error": "uzr, siz tanlagan vaqtda xona band"}, status=status.HTTP_410_GONE)
 
 
 # TODO: test the built rest api
