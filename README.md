@@ -1,17 +1,17 @@
 # Coworking-center-api
 
-1) Proyekt'ni ko'mpyuterga ko'chirib oling: git clone https://github.com/JavoxirOne/Coworking-center-api.git
-2) Yangi environment yarating: python -m venv venv (for Windows); python3 -m venv venv (for Linux)
-3) Environment'ni activate qiling: cd venv/Scripts/activate (for Windows); source venv/bin/activate (for Linux)
-4) Kerakli kutbxonalarni yuklab oling: pip install -r requirements.txt
-5) Proyekt'ni local server'da oching: python manage.py runserver (for Windows); python3 manage.py runserver (for Linux)
-6) Local serverda websaytni ishlagandan so'ng /admin/ path'ga o'tib (username: admin | password: 123) shu ma'lumotlarni kiritgan holda Admin panel'ga kirishingiz mumkin bo'ladi
+1) Copy the project to the computer: git clone https://github.com/JavoxirOne/Coworking-center-api.git
+2) Create a new environment: python -m venv venv (for Windows); python3 -m venv venv (for Linux)
+3) Activate Environment: cd venv/Scripts/activate (for Windows); source venv/bin/activate (for Linux)
+4) Download required libraries: pip install -r requirements.txt
+5) Open the project on the local server: python manage.py runserver (for Windows); python3 manage.py runserver (for Linux)
+6) After running the website on the local server, go to /admin/ path (username: admin | password: 123) and enter the Admin panel.
 
 # API Endpoints
-<b>API so'nggi nuqtalarining ildizi:</b> "api/" <br>
-<b>Xonalar ro'yxati:</b> "api/rooms/"<br>
-<b>Ma'lum bir xona tafsilotlari:</b> "api/rooms/<int:pk>/"<br>
-<b>Ma'lum bir xona mavjudligi (vaqt oraliqlari):</b> "api/rooms/<int:pk>/availability/"<br>
-<b>Mavjud vaqt oralig'i uchun alohida xonani band qiling:</b> "api/rooms/<int:pk>/book/"<br>
-<b>Yagona bandlov:</b> "api/bookings/<int:pk>/"<br>
-<b>Bandlovlari ro'yxati:</b> "api/bookings/"<br>
+<b>API endpoints root:</b> "api/" <br>
+<b>List of rooms:</b> "api/rooms/"<br>
+<b>Details of a specific room:</b> "api/rooms/<int:pk>/"<br>
+<b>Availability of a specific room (time slots):</b> "api/rooms/<int:pk>/availability/"<br>
+<b>Book a separate room for the available time slot:</b> "api/rooms/<int:pk>/book/"<br>
+<b>Single booking:</b> "api/bookings/<int:pk>/"<br>
+<b>List of bookings:</b> "api/bookings/"<br>
