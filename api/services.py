@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, get_list_or_404
 from .models import Room, Availability, Resident, Booking
 from datetime import datetime, timedelta
 
@@ -72,9 +72,9 @@ def get_overlapping_availabilities_list(room, date, start_time, end_time):
     return room.available_times.filter(date=date, start__lt=end_time, end__gt=start_time)
 
 
-def get_available_time_slot(room, start_time, end_time):
+def get_available_time_slot(room, date, start_time, end_time):
     """ This service returns single time slot """
-    return room.available_times.get(start__lt=end_time, end__gt=start_time)
+    return room.available_times.get(date=date, start__lt=end_time, end__gt=start_time)
 
 
 def create_two_time_slots(new_time_slots, room, date):
@@ -99,3 +99,38 @@ def create_new_booking(room, resident, date, start_time, end_time):
     booking = Booking(room=room, resident=resident, date=date, start=start_time, end=end_time)
     booking.save()
     return booking
+
+
+def get_list_or_object_of_booking(pk=None):
+    """ This services handles the bookings and returns single item of Booking or list of them """
+    if not pk:
+        return get_list_or_404(Booking)
+    return get_object_or_404(Booking, pk=pk)
+
+
+def convert_to_reversed_date_format(date_str: str):
+    """ This service converts YYYY-MM-DD format to DD-MM-YYYY format and returns it """
+    try:
+        date_obj = datetime.strptime(date_str, '%Y-%m-%d')
+        new_date_format = date_obj.strftime('%d-%m-%Y')
+        return new_date_format
+    except ValueError:
+        return "Invalid date format"
+
+
+def check_and_convert_date(date_str: str | None):
+    """ This service checks for the date being in YYYY-MM-DD format if it is not then converts and returns date
+    correct format"""
+    if not date_str:
+        return None
+    try:
+        # Checking if the date is in YYYY-MM-DD format
+        datetime.strptime(date_str, '%Y-%m-%d')
+        return date_str  # Date is already in the correct format
+    except ValueError:
+        try:
+            # Checking if the date is in DD-MM-YYYY format
+            date_obj = datetime.strptime(date_str, '%d-%m-%Y')
+            return date_obj.strftime('%Y-%m-%d')  # Converting to the desired format
+        except ValueError:
+            return "Invalid date format"

@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-x&8!6v6^&2044)rdf$av8i*%%x4cw@*$j*x$y%!wb$%n2kc$ui
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['coworking-center-api.jprq.live', '127.0.0.1:8000']
 
 
 # Application definition
@@ -124,3 +124,4 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+CSRF_TRUSTED_ORIGINS = ['https://coworking-center-api.jprq.live']
